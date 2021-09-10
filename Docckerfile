@@ -1,0 +1,31 @@
+FROM debian:bookworm-slim
+
+WORKDIR /var/www/html
+
+RUN apt update
+
+#Install Tools
+RUN apt install -y php7.4 \
+    php7.4-gd \
+    php7.4-xml \
+    php7.4-xdebug \
+    composer \
+    curl \
+    zip \
+    
+
+#Install Drush
+RUN apt install php-xml \
+    && composer global require consolidation/cgr \
+    && PATH="$(composer config -g home)/vendor/bin:$PATH" \
+    && cgr drush/drush
+
+#Install Nginx
+RUN apt install -y nginx 
+
+#Uninstall Apache
+RUN apt remove -y apache2
+
+WORKDIR /var/www/html
+
+ENTRYPOINT ["/bin/bash"]
